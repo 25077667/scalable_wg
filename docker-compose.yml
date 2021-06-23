@@ -16,6 +16,8 @@ services:
     frontend:
         container_name: frontend
         build: frontend/
+        depends_on: 
+            - backend
         ports: 
             - "80:80"
             - "443:443"
@@ -38,7 +40,6 @@ services:
         container_name: manager
         build: backend/
         depends_on: 
-            - frontend
             # - mongo
         environment:
             # - MONGODB_URL=mongo
