@@ -39,7 +39,7 @@ services:
     backend:
         container_name: manager
         build: backend/
-        depends_on: 
+        # depends_on: 
             # - mongo
         environment:
             # - MONGODB_URL=mongo
