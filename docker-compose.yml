@@ -59,6 +59,7 @@ services:
         environment:
             - PUID=1000
             - PGID=1000
+            - PEERS=105
             - TZ=Asia/Taipei
             - SERVERPORT=51820 #optional
             - PEERDNS=auto #optional
