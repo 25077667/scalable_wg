@@ -1,17 +1,5 @@
 version: "3.8"
 
-# variables:
-#     - name: 'machines'
-#       value: 1
-#     - name: 'replica0'
-#       value: '140.117.169.211'
-#     - name: 'replica1'
-#       value: '140.117.169.212'
-#     - name: 'replica2'
-#       value: '140.117.169.213'
-#     - name: 'replica3'
-#       value: '140.117.169.214'
-
 services:
     frontend:
         container_name: frontend
@@ -39,38 +27,60 @@ services:
     backend:
         container_name: manager
         build: backend/
-        # depends_on: 
+        depends_on: 
+            - vpn1
+            - vpn2
+            - vpn3
             # - mongo
         environment:
             # - MONGODB_URL=mongo
             # - MONGODB_ACCOUNT=
-            - REGNUM=1
+            - REGNUM=3
             - REMOTE0=140.117.169.211
+            - REMOTE1=140.117.169.212
+            - REMOTE2=140.117.169.213
         ports: 
-            - "3000:3000"
+            - "3000"
         restart: unless-stopped
 
     vpn1:
-        image: ghcr.io/linuxserver/wireguard
         container_name: vpn1
+        build: vpn/
         cap_add:
             - NET_ADMIN
             - SYS_MODULE
-        environment:
-            - PUID=1000
-            - PGID=1000
-            - PEERS=105
-            - TZ=Asia/Taipei
-            - SERVERPORT=51821 #optional
-            - PEERDNS=auto #optional
-            - INTERNAL_SUBNET=10.13.13.0 #optional
-            - ALLOWEDIPS=0.0.0.0/0 #optional
         volumes:
-            - /path/to/appdata/config:/config
-            - /lib/modules:/lib/modules
+            - ./data/vpn1/config:/config
         ports: 
             - 140.117.169.211:51821:51820/udp
         sysctls:
             - net.ipv4.conf.all.src_valid_mark=1
         restart: unless-stopped
-
+    
+    vpn2:
+        container_name: vpn2
+        build: vpn/
+        cap_add:
+            - NET_ADMIN
+            - SYS_MODULE
+        volumes:
+            - ./data/vpn2/config:/config
+        ports: 
+            - 140.117.169.212:51821:51820/udp
+        sysctls:
+            - net.ipv4.conf.all.src_valid_mark=1
+        restart: unless-stopped
+    
+    vpn3:
+        container_name: vpn3
+        build: vpn/
+        cap_add:
+            - NET_ADMIN
+            - SYS_MODULE
+        volumes:
+            - ./data/vpn3/config:/config
+        ports: 
+            - 140.117.169.213:51821:51820/udp
+        sysctls:
+            - net.ipv4.conf.all.src_valid_mark=1
+        restart: unless-stopped

@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,18 +20,13 @@ func init_db() {
 	}
 }
 
-func get_acc_pw(data []string) (string, string) {
-	account, pw := strings.Split(data[0], "="), strings.Split(data[1], "=")
-	return account[1], pw[1]
-}
-
 func select_server() (string, string) {
 	num, _ := strconv.Atoi(os.Getenv("REGNUM"))
 	var result string
 	for i := 0; i < num; i++ {
 		result = os.Getenv("REMOTE" + strconv.Itoa(i))
 	}
-	// ! FIXME: Token
+	// TODO: Token
 	return result, "TOKEN"
 }
 
@@ -42,11 +36,7 @@ func main() {
 	app := fiber.New()
 
 	app.Post("/Login", func(c *fiber.Ctx) error {
-		user_data := strings.Split(string(c.Body()), "&")
-		if len(user_data) != 2 {
-			return c.SendString("Invalid input!")
-		}
-		account, raw_pw := get_acc_pw(user_data)
+		account, raw_pw := c.Get("user"), c.Get("passwd")
 		sha_bytes := sha256.Sum256([]byte(raw_pw))
 		hashed_pw := hex.EncodeToString(sha_bytes[:])
 
