@@ -61,7 +61,7 @@ services:
             - PGID=1000
             - PEERS=105
             - TZ=Asia/Taipei
-            - SERVERPORT=51820 #optional
+            - SERVERPORT=51821 #optional
             - PEERDNS=auto #optional
             - INTERNAL_SUBNET=10.13.13.0 #optional
             - ALLOWEDIPS=0.0.0.0/0 #optional
