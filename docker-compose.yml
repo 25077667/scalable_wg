@@ -1,0 +1,73 @@
+version: "3.8"
+
+variables:
+    - name: 'machines'
+      value: 1
+    - name: 'replica0'
+      value: '140.117.169.211'
+    - name: 'replica1'
+      value: '140.117.169.212'
+    - name: 'replica2'
+      value: '140.117.169.213'
+    - name: 'replica3'
+      value: '140.117.169.214'
+
+services:
+    frontend:
+        container_name: frontend
+        build: frontend/
+        ports: 
+            - "80:80"
+            - "443:443"
+        environment: 
+            - NGINX_PORT=80
+        volumes:
+            - "frontend/data/nginx/log:/var/log/nginx"
+            - "frontend/nginx/nginx.conf:/etc/nginx/nginx.conf"
+        restart: unless-stopped
+
+    # mongo:
+    #     image: mongo:bionic
+    #     environment:
+    #         # - MONGO_INITDB_DATABASE=
+    #         # - MONGO_INITDB_ROOT_USERNAME=
+    #         # - MONGO_INITDB_ROOT_PASSWORD=
+    #     restart: unless-stopped
+
+    backend:
+        container_name: manager
+        build: backend/
+        depends_on: 
+            - frontend
+            # - mongo
+        environment:
+            # - MONGODB_URL=mongo
+            # - MONGODB_ACCOUNT=
+            - REGNUM={{ machines }}
+            - REMOTE0={{ replica0 }}
+        ports: 
+            - "3000:3000"
+        restart: unless-stopped
+
+    vpn1:
+        image: ghcr.io/linuxserver/wireguard
+        container_name: vpn1
+        cap_add:
+            - NET_ADMIN
+            - SYS_MODULE
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Asia/Taipei
+            - SERVERPORT=51820 #optional
+            - PEERDNS=auto #optional
+            - INTERNAL_SUBNET=10.13.13.0 #optional
+            - ALLOWEDIPS=0.0.0.0/0 #optional
+        volumes:
+            - /path/to/appdata/config:/config
+            - /lib/modules:/lib/modules
+        ports: "{{ replica0 }}:51821:51820/udp"
+        sysctls:
+            - net.ipv4.conf.all.src_valid_mark=1
+        restart: unless-stopped
+
