@@ -1,0 +1,3 @@
+[submodule "vpn"]
+	path = vpn
+	url = git@github.com:25077667/docker-wireguard.git

@@ -49,10 +49,12 @@ services:
         cap_add:
             - NET_ADMIN
             - SYS_MODULE
+        environment:
+            - PEERS=105
         volumes:
             - ./data/vpn1/config:/config
         ports: 
-            - 140.117.169.211:51821:51820/udp
+            - 140.117.169.211:51820:51820/udp
         sysctls:
             - net.ipv4.conf.all.src_valid_mark=1
         restart: unless-stopped
@@ -63,10 +65,12 @@ services:
         cap_add:
             - NET_ADMIN
             - SYS_MODULE
+        environment:
+            - PEERS=105
         volumes:
             - ./data/vpn2/config:/config
         ports: 
-            - 140.117.169.212:51821:51820/udp
+            - 140.117.169.212:51820:51820/udp
         sysctls:
             - net.ipv4.conf.all.src_valid_mark=1
         restart: unless-stopped
@@ -77,10 +81,12 @@ services:
         cap_add:
             - NET_ADMIN
             - SYS_MODULE
+        environment:
+            - PEERS=105
         volumes:
             - ./data/vpn3/config:/config
         ports: 
-            - 140.117.169.213:51821:51820/udp
+            - 140.117.169.213:51820:51820/udp
         sysctls:
             - net.ipv4.conf.all.src_valid_mark=1
         restart: unless-stopped
