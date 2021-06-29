@@ -2,17 +2,21 @@ package main
 
 import (
 	"crypto/sha256"
+	"encoding/binary"
 	"encoding/hex"
+	"log"
 	"os"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/skip2/go-qrcode"
+	"github.com/valyala/fasthttp"
 )
 
 // Database need to implemented
 var Database = make(map[string]string)
 
-func init_db() {
+func init() {
 	for i := 0; i < 5000; i++ {
 		// user1:amazingvpn
 		sha_bytes := sha256.Sum256([]byte("amazingvpn"))
@@ -20,19 +24,39 @@ func init_db() {
 	}
 }
 
-func select_server() (string, string) {
-	num, _ := strconv.Atoi(os.Getenv("REGNUM"))
-	var result string
-	for i := 0; i < num; i++ {
-		result = os.Getenv("REMOTE" + strconv.Itoa(i))
+func gen_qrcode(dataString string) []byte {
+	png, err := qrcode.Encode(dataString, qrcode.Medium, 256)
+	if err != nil {
+		log.Println(err)
 	}
-	// TODO: Token
-	return result, "TOKEN"
+	return png
+}
+
+func get_peer_token(machine_index int, index int) []byte {
+	machine := os.Getenv("REMOTE" + strconv.Itoa(machine_index))
+	req := fasthttp.AcquireRequest()
+	req.SetRequestURI(machine + ":8080/peer" + strconv.Itoa(index))
+
+	resp := fasthttp.AcquireResponse()
+	cli := &fasthttp.Client{}
+	cli.Do(req, resp)
+
+	return gen_qrcode(string(resp.Body()))
+}
+
+func select_entry(account string) []byte {
+	regnum, _ := strconv.Atoi(os.Getenv("REGNUM"))
+	num := uint32(regnum)
+
+	sha_bytes := sha256.Sum256([]byte(account))
+	val := binary.LittleEndian.Uint32(sha_bytes[:])
+
+	machine, index := int(val%num), int(val%105+1)
+
+	return get_peer_token(machine, index)
 }
 
 func main() {
-	init_db()
-
 	app := fiber.New()
 
 	app.Post("/Login", func(c *fiber.Ctx) error {
@@ -41,8 +65,8 @@ func main() {
 		hashed_pw := hex.EncodeToString(sha_bytes[:])
 
 		if Database[account] == hashed_pw {
-			ip, tok := select_server()
-			return c.SendString(ip + "\n" + tok)
+			tok := select_entry(account)
+			return c.Send(tok)
 		} else {
 			return c.SendString("Permission denied!")
 		}
