@@ -10,8 +10,9 @@ services:
             - "80:80"
             - "443:443"
         environment: 
-            - NGINX_PORT=80
             - CERTBOT_EMAIL=iscnsysu2019@gmail.com
+            - FQDN=vpn.nsysuisc.tw
+            - ENVSUBST_VARS=FQDN
         volumes:
             - "./frontend/data/nginx/log:/var/log/nginx"
             - "./nginx:/etc/nginx/user.conf.d:ro"
