@@ -15,8 +15,11 @@ import (
 
 // Database need to implemented
 var Database = make(map[string]string)
+var logger = log.New(os.Stdout, "[DEBUG]", log.Ltime)
 
 func init() {
+	logfile, _ := os.OpenFile("testlogfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	logger.SetOutput(logfile)
 	for i := 0; i < 5000; i++ {
 		// user1:amazingvpn
 		sha_bytes := sha256.Sum256([]byte("amazingvpn"))
@@ -27,7 +30,7 @@ func init() {
 func gen_qrcode(dataString string) []byte {
 	png, err := qrcode.Encode(dataString, qrcode.Medium, 256)
 	if err != nil {
-		log.Println(err)
+		logger.Println(err)
 	}
 	return png
 }
@@ -45,7 +48,10 @@ func get_peer_token(machine_index int, index int) []byte {
 }
 
 func select_entry(account string) []byte {
-	regnum, _ := strconv.Atoi(os.Getenv("REGNUM"))
+	regnum, err := strconv.Atoi(os.Getenv("REGNUM"))
+	if err != nil {
+		logger.Println(err)
+	}
 	num := uint32(regnum)
 
 	sha_bytes := sha256.Sum256([]byte(account))
@@ -68,6 +74,7 @@ func main() {
 			tok := select_entry(account)
 			return c.Send(tok)
 		} else {
+			logger.Println("Wrong password: ", hashed_pw, " , Correct hash: ", Database[account])
 			return c.SendString("Permission denied!")
 		}
 	})
