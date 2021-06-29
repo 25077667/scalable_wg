@@ -8,4 +8,7 @@
 # Local History for Visual Studio Code
 .history/
 frontend/data/
+
+# Ignore local data
 vpn/data/
+data/
