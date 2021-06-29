@@ -15,8 +15,8 @@ services:
             - ENVSUBST_VARS=FQDN
         volumes:
             - "./frontend/data/nginx/log:/var/log/nginx"
-            - "./nginx/nginx.conf:/etc/nginx/user.conf.d/nginx.conf:ro"
-            - "./html/:/usr/share/nginx/html:ro"
+            - "./frontend/nginx/nginx.conf:/etc/nginx/user.conf.d/nginx.conf:ro"
+            - "./frontend/html/:/usr/share/nginx/html:ro"
             - "/etc/letsencrypt:/etc/letsencrypt:ro"
         restart: unless-stopped
         networks: 
