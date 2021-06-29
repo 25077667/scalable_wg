@@ -17,7 +17,7 @@ services:
             - "./frontend/data/nginx/log:/var/log/nginx"
             - "./nginx:/etc/nginx/user.conf.d:ro"
             - "./html/:/usr/share/nginx/html:ro"
-            - "letsencrypt:/etc/letsencrypt"
+            - "/etc/letsencrypt:/etc/letsencrypt:ro"
         restart: unless-stopped
         networks: 
             - backend
