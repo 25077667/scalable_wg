@@ -39,8 +39,6 @@ services:
             - REMOTE0=140.117.169.211
             - REMOTE1=140.117.169.212
             - REMOTE2=140.117.169.213
-        ports: 
-            - "3000"
         restart: unless-stopped
 
     vpn1:

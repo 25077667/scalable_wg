@@ -36,9 +36,9 @@ func gen_qrcode(dataString string) []byte {
 }
 
 func get_peer_token(machine_index int, index int) []byte {
-	machine := os.Getenv("REMOTE" + strconv.Itoa(machine_index))
+	machine := "vpn" + strconv.Itoa(machine_index)
 	req := fasthttp.AcquireRequest()
-	req.SetRequestURI(machine + ":8080/peer" + strconv.Itoa(index))
+	req.SetRequestURI("http://" + machine + ":8080/peer" + strconv.Itoa(index))
 
 	resp := fasthttp.AcquireResponse()
 	cli := &fasthttp.Client{}

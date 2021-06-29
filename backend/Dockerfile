@@ -9,5 +9,5 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o manager manager.g
 FROM alpine
 WORKDIR /app
 COPY --from=builder /src/manager /app
-EXPOSE 3000
+EXPOSE 8080
 CMD ["./manager"]
