@@ -66,7 +66,7 @@ func main() {
 	app := fiber.New()
 
 	app.Post("/Login", func(c *fiber.Ctx) error {
-		account, raw_pw := c.Get("user"), c.Get("passwd")
+		account, raw_pw := c.FormValue("user"), c.FormValue("passwd")
 		sha_bytes := sha256.Sum256([]byte(raw_pw))
 		hashed_pw := hex.EncodeToString(sha_bytes[:])
 
