@@ -3,7 +3,7 @@ version: "3.8"
 services:
     frontend:
         container_name: frontend
-        build: frontend/
+        image: staticfloat/nginx-certbot
         depends_on: 
             - backend
         ports: 
@@ -11,9 +11,12 @@ services:
             - "443:443"
         environment: 
             - NGINX_PORT=80
+            - CERTBOT_EMAIL: iscnsysu2019@gmail.com
         volumes:
             - "./frontend/data/nginx/log:/var/log/nginx"
-            - "./frontend/nginx/nginx.conf:/etc/nginx/nginx.conf"
+            - "./nginx:/etc/nginx/user.conf.d:ro"
+            - "./html/:/usr/share/nginx/html:ro"
+            - "letsencrypt:/etc/letsencrypt"
         restart: unless-stopped
         networks: 
             - backend
@@ -105,3 +108,5 @@ networks:
         driver: bridge
     vpn:
         driver: bridge
+volumes:
+    letsencrypt:
