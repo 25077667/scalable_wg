@@ -28,21 +28,18 @@ services:
         container_name: manager
         build: backend/
         depends_on: 
+            - vpn0
             - vpn1
             - vpn2
-            - vpn3
             # - mongo
         environment:
             # - MONGODB_URL=mongo
             # - MONGODB_ACCOUNT=
             - REGNUM=3
-            - REMOTE0=140.117.169.211
-            - REMOTE1=140.117.169.212
-            - REMOTE2=140.117.169.213
         restart: unless-stopped
 
-    vpn1:
-        container_name: vpn1
+    vpn0:
+        container_name: vpn0
         build: vpn/
         cap_add:
             - NET_ADMIN
@@ -57,8 +54,8 @@ services:
             - net.ipv4.conf.all.src_valid_mark=1
         restart: unless-stopped
     
-    vpn2:
-        container_name: vpn2
+    vpn1:
+        container_name: vpn1
         build: vpn/
         cap_add:
             - NET_ADMIN
@@ -73,8 +70,8 @@ services:
             - net.ipv4.conf.all.src_valid_mark=1
         restart: unless-stopped
     
-    vpn3:
-        container_name: vpn3
+    vpn2:
+        container_name: vpn2
         build: vpn/
         cap_add:
             - NET_ADMIN
