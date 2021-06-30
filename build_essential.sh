@@ -1,15 +1,29 @@
 #!/bin/bash
 
-# update
-apt update && apt upgrade -y
+if [[ $EUID -ne 0 ]]; then
+    echo "This script will install packages, please run this in root's permission"
+    exit 1
+fi
 
-# essential pkg
-apt install build-essentail nginx git openssh
+echo "192 vpn1" >>/etc/iproute2/rt_tables
+echo "196 vpn2" >>/etc/iproute2/rt_tables
 
-# install golang
-wget https://golang.org/dl/go1.16.5.linux-amd64.tar.gz
-rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.5.linux-amd64.tar.gz
-echo "export PATH=$PATH:/usr/local/go/bin" >> /etc/profile
+ip route flush table vpn1
+ip route flush table vpn2
 
-# golang lis
-go get -u github.com/gofiber/fiber/v2
+ip route add default via 140.117.169.254 enp3s0 src 140.117.169.212 table vpn1
+ip route add default via 140.117.169.254 enp4s0 src 140.117.169.213 table vpn2
+
+ip rule add from 140.117.169.212 table vpn1
+ip rule add from 140.117.169.213 table vpn2
+
+echo "
+ip route flush table vpn1
+ip route flush table vpn2
+
+ip route add default via 140.117.169.254 enp3s0 src 140.117.169.212 table vpn1
+ip route add default via 140.117.169.254 enp4s0 src 140.117.169.213 table vpn2
+
+ip rule add from 140.117.169.212 table vpn1
+ip rule add from 140.117.169.213 table vpn2
+" >>/etc/rc.local

@@ -28,7 +28,7 @@ func init() {
 }
 
 func gen_qrcode(dataString string) []byte {
-	png, err := qrcode.Encode(dataString, qrcode.Medium, 256)
+	png, err := qrcode.Encode(dataString, qrcode.Medium, 512)
 	if err != nil {
 		logger.Println(err)
 	}
