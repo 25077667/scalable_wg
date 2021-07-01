@@ -10,8 +10,8 @@ services:
             - "80:80"
             - "443:443"
         environment: 
-            - CERTBOT_EMAIL=iscnsysu2019@gmail.com
-            - FQDN=vpn.nsysuisc.tw
+            - CERTBOT_EMAIL=${CERTBOT_EMAIL}
+            - FQDN=${DOMAIN}
             - ENVSUBST_VARS=FQDN
         volumes:
             - "./frontend/data/nginx/log:/var/log/nginx"
@@ -22,14 +22,6 @@ services:
         networks: 
             - backend
 
-    # mongo:
-    #     image: mongo:bionic
-    #     environment:
-    #         # - MONGO_INITDB_DATABASE=
-    #         # - MONGO_INITDB_ROOT_USERNAME=
-    #         # - MONGO_INITDB_ROOT_PASSWORD=
-    #     restart: unless-stopped
-
     backend:
         container_name: manager
         build: backend/
@@ -37,11 +29,11 @@ services:
             - vpn0
             - vpn1
             - vpn2
-            # - mongo
         environment:
-            # - MONGODB_URL=mongo
-            # - MONGODB_ACCOUNT=
-            - REGNUM=3
+            - REGNUM=${VPN_NUM}
+            - VPN0_PEER=${VPN0_PEER}
+            - VPN1_PEER=${VPN1_PEER}
+            - VPN2_PEER=${VPN2_PEER}
         restart: unless-stopped
         networks: 
             - backend
@@ -55,12 +47,12 @@ services:
             - NET_ADMIN
             - SYS_MODULE
         environment:
-            - PEERS=105
-            - SERVERURL=140.117.169.211
+            - PEERS=${VPN0_PEER}
+            - SERVERURL=${VPN0_IP}
         volumes:
             - ./data/vpn1/config:/config
         ports: 
-            - 140.117.169.211:51820:51820/udp
+            - ${VPN0_IP}:51820:51820/udp
         sysctls:
             - net.ipv4.conf.all.src_valid_mark=1
         restart: unless-stopped
@@ -74,12 +66,12 @@ services:
             - NET_ADMIN
             - SYS_MODULE
         environment:
-            - PEERS=105
-            - SERVERURL=140.117.169.212
+            - PEERS=${VPN1_PEER}
+            - SERVERURL=${VPN1_IP}
         volumes:
             - ./data/vpn2/config:/config
         ports: 
-            - 140.117.169.212:51820:51820/udp
+            - ${VPN1_IP}:51820:51820/udp
         sysctls:
             - net.ipv4.conf.all.src_valid_mark=1
         restart: unless-stopped
@@ -93,12 +85,12 @@ services:
             - NET_ADMIN
             - SYS_MODULE
         environment:
-            - PEERS=105
-            - SERVERURL=140.117.169.213
+            - PEERS=${VPN2_PEER}
+            - SERVERURL=${VPN2_IP}
         volumes:
             - ./data/vpn3/config:/config
         ports: 
-            - 140.117.169.213:51820:51820/udp
+            - ${VPN2_IP}:51820:51820/udp
         sysctls:
             - net.ipv4.conf.all.src_valid_mark=1
         restart: unless-stopped

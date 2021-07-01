@@ -12,3 +12,5 @@ frontend/data/
 # Ignore local data
 vpn/data/
 data/
+
+.env
