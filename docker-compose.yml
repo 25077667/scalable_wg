@@ -34,6 +34,7 @@ services:
             - VPN0_PEER=${VPN0_PEER}
             - VPN1_PEER=${VPN1_PEER}
             - VPN2_PEER=${VPN2_PEER}
+            - SSO_URL=${SSO_URL}
         restart: unless-stopped
         networks: 
             - backend

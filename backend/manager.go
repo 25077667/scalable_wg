@@ -79,7 +79,7 @@ func auth(account string, passwd string) bool {
 
 	url := os.Getenv("SSO_URL")
 	if url == "" {
-		log.Panicln("The SSO_URL is not setted.")
+		log.Println("The SSO_URL is not setted.")
 	}
 	req := &fasthttp.Request{}
 	req.SetRequestURI(url)
